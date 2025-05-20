@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فرم پورتفولیو ایجنت</title>
+    <style>
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background-color: #dff0d8;
+            border: 1px solid #d6e9c6;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            border: 1px solid #ebccd1;
+            color: #a94442;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>پورتفولیو ایجنت</h1>
+        <form id="portfolioForm">
+            <div class="form-group">
+                <label for="projectTitle">عنوان پروژه:</label>
+                <input type="text" id="projectTitle" name="projectTitle" required>
+            </div>
+            <div class="form-group">
+                <label for="projectTopic">موضوع پروژه:</label>
+                <input type="text" id="projectTopic" name="projectTopic" required>
+            </div>
+            <div class="form-group">
+                <label for="imageUrl">لینک تصویر:</label>
+                <input type="url" id="imageUrl" name="imageUrl" placeholder="https://example.com/image.jpg" required>
+                <small style="display: block; margin-top: 5px; color: #777;">
+                    ابتدا تصویر خود را در سرویسی مانند Imgur آپلود کنید و لینک مستقیم آن را در اینجا وارد کنید.
+                </small>
+            </div>
+            <button type="submit">ارسال</button>
+        </form>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('portfolioForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const projectTitle = document.getElementById('projectTitle').value;
+            const projectTopic = document.getElementById('projectTopic').value;
+            const imageUrl = document.getElementById('imageUrl').value;
+            
+            // اینجا URL وب‌هوک خود را از Make.com قرار دهید
+            const webhookUrl = 'YOUR_MAKE_WEBHOOK_URL_HERE';
+            
+            const data = {
+                projectTitle: projectTitle,
+                projectTopic: projectTopic,
+                imageUrl: imageUrl,
+                date: new Date().toISOString()
+            };
+            
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    showResult('اطلاعات با موفقیت ارسال شد و بزودی در نوشن شما ثبت خواهد شد.', 'success');
+                    document.getElementById('portfolioForm').reset();
+                } else {
+                    showResult('خطا در ارسال اطلاعات. لطفا مجددا تلاش کنید.', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showResult('خطایی رخ داد: ' + error.message, 'error');
+            });
+        });
+        
+        function showResult(message, type) {
+            const resultElement = document.getElementById('result');
+            resultElement.textContent = message;
+            resultElement.className = `result ${type}`;
+            resultElement.style.display = 'block';
+            
+            // پنهان کردن پیام بعد از 5 ثانیه
+            setTimeout(() => {
+                resultElement.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
